@@ -1,0 +1,17 @@
+import-module sqlserver
+
+$instanceName = “localhost”
+$managedComputer = New-Object Microsoft.SqlServer.Management.Smo.Wmi.ManagedComputer $instanceName
+
+# Show aliases
+#$managedComputer.ServerAliases | select name, servername, connectionstring
+
+
+[Microsoft.SqlServer.Management.Smo.Wmi.ServerAlias]$newalias = New-Object ("Microsoft.SqlServer.Management.Smo.Wmi.ServerAlias");
+$newalias.name = 'DBPRSVSQL11'
+$newalias.servername = '.'
+$newalias.connectionstring = 11361
+$newalias.ProtocolName = 'TCP'
+
+$newalias.Parent = $managedComputer;
+$newalias.Create()
