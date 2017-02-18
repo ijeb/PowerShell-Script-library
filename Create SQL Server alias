@@ -8,9 +8,9 @@ $managedComputer = New-Object Microsoft.SqlServer.Management.Smo.Wmi.ManagedComp
 
 
 [Microsoft.SqlServer.Management.Smo.Wmi.ServerAlias]$newalias = New-Object ("Microsoft.SqlServer.Management.Smo.Wmi.ServerAlias");
-$newalias.name = 'DBPRSVSQL11'
-$newalias.servername = '.'
-$newalias.connectionstring = 11361
+$newalias.name = 'alias'
+$newalias.servername = 'server'
+$newalias.connectionstring = port
 $newalias.ProtocolName = 'TCP'
 
 $newalias.Parent = $managedComputer;
