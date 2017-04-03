@@ -1,0 +1,43 @@
+Function Show-StoppedServices
+{
+<#
+.SYNOPSIS
+Show services on all specified servers with starttype automatic and status not running.
+
+.DESCRIPTION
+Gets a list of computers from the domain controller and checks for stopped services on these servers. Some services are ignored. The output is shown in a gridview.
+
+.PARAMETER SearchBase
+Specifies an Active Directory path to search under.
+
+.PARAMETER Server
+Specifies the Active Directory Domain Services instance to connect to.
+
+.PARAMETER SkippedServers
+Specifies the servers not to check.
+
+.PARAMETER SkippedServices
+Specifies the services to ignore.
+
+.NOTES
+ijeb 3-4-2017
+
+.EXAMPLE
+Show-StoppedServices -SearchBase "CN=Computers,DC=Fabrikam,DC=com" -Server "DC" -SkippedServices @('RemoteRegistry','ShellHWDetection','sppsvc')
+ 
+#>
+    param (
+            [string]$SearchBase,
+            [string]$Server,
+            [string[]]$SkippedServers,
+            [string[]]$SkippedServices
+    )
+
+    Import-Module ActiveDirectory
+
+    Get-Service -computerName (
+                                Get-ADComputer -Filter * -SearchBase "OU=SCCM,OU=Servers,OU=Computers,OU=DB,DC=db,DC=ecumulus,DC=nl" -Server "DBPRSVDC1" | Select-Object -Expand name | Where-Object {$_ -notin $SkippedServers}
+                              ) `
+        | Where-Object {$_.StartType -eq "automatic" -and $_.status -ne "running"} `
+        | Where-Object {$_.Name -notin $SkippedServices} | Select-Object MachineName, Name, StartType, Status | Out-Gridview
+}
